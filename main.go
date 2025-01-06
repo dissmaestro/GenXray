@@ -117,13 +117,13 @@ func main() {
 		fmt.Println("ERROR: writing config file:", err)
 		return
 	}
-	fmt.Printf(" New client added successfully! \n uuid = %s ShortIds = bba4b98aea9b4c44 \n PublickKey = B6EDlqDc8frz7_LofqbgOse0_ryxT8lwW2P84-3CEU8 ", string(output))
+	fmt.Printf(" New client added successfully! \n uuid = %s ShortIds = bba4b98aea9b4c44 \n PublickKey = B6EDlqDc8frz7_LofqbgOse0_ryxT8lwW2P84-3CEU8 \n", string(output))
 	restartXray := exec.Command("systemctl", "restart", "xray")
-	res, err := restartXray.CombinedOutput()
+	err = restartXray.Run()
 	if err != nil {
 		fmt.Println("ERROR: do you have Xray?", err)
 		return
 	}
-	fmt.Println("Service Xray reload succsesfully", res)
+	fmt.Println("Service Xray reload succsesfully")
 
 }

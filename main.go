@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+// SIMPLY ADD NEW USERS IN XRAY SERVER
+// THE EXECUTABLE CODE MUST BE LOCATED IN THE DIRECTORY WITH THE CONFIG.JSON
+// USE THIS SCRIPT WHEN YOU ALREADY CONFIGURED XRAY (YOU KNOW YOUR SHORTUDS AND PUBLICKKEY)
+// AUTHOR DISSMAESTRO 07.01.2024
+
 type Client struct {
 	Id    string `json:"id"`
 	Email string `json:"email"`
@@ -81,7 +86,7 @@ func main() {
 
 	// GEnerate uuid
 
-	cmd := exec.Command("/opt/xray/xray uuid")
+	cmd := exec.Command("/opt/xray/xray", "uuid")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println("ERROR: do you have Xray?", err)
@@ -89,9 +94,9 @@ func main() {
 	}
 	// Create a new client
 	newClient := Client{
-		Id:    string(output),     // Replace with a unique ID
-		Email: args[1],            // Replace with the client's email
-		Flow:  "xtls-rprx-vision", // Optional flow value
+		Id:    strings.TrimSpace(string(output)), // Replace with a unique ID
+		Email: args[1],                           // Replace with the client's email
+		Flow:  "xtls-rprx-vision",                // Optional flow value
 	}
 
 	// Append the new client to the list
@@ -114,7 +119,13 @@ func main() {
 		fmt.Println("Error writing config file:", err)
 		return
 	}
+	fmt.Printf("New client added successfully! \n uuid = %s \n ShortIds = bba4b98aea9b4c44 \n PublickKey = B6EDlqDc8frz7_LofqbgOse0_ryxT8lwW2P84-3CEU8 ", string(output))
+	restartXray := exec.Command("systemctl", "restart", "xray")
+	res, err := restartXray.CombinedOutput()
+	if err != nil {
+		fmt.Println("ERROR: do you have Xray?", err)
+		return
+	}
+	fmt.Println("Service Xray reload succsesfully", res)
 
-	fmt.Println("New client added successfully! ")
-	fmt.Printf("New client added successfully! \n uuid = %s \n ShortIds = bba4b98aea9b4c44 \n  ", string(output))
 }

@@ -21,7 +21,6 @@ type Client struct {
 
 type VlessInboundConfig struct {
 	Clients []Client `json:"clients"`
-	// Other vless settings...
 }
 
 type Config struct {
@@ -34,13 +33,12 @@ type Config struct {
 func main() {
 	// Getting name of user from cmd
 	args := os.Args
-	fmt.Println("You should write name of your key \n exmple = dyadaya@vasya \n symbol \"@\"is nessesary:", args)
 	if len(args) == 2 {
-		fmt.Println("You are my sweatty, DEAR ", args[1])
 		if !strings.Contains(args[1], "@") {
 			fmt.Println("\n ERROR: argument must contains symbol \"@\" \n ")
 			return
 		}
+		fmt.Println("You are my sweatty, DEAR \n", args[1])
 	} else {
 		fmt.Println("\n ERROR: You should give only 1 argument \n ")
 		return
@@ -50,14 +48,14 @@ func main() {
 	configFile := "config.json"
 	data, err := os.ReadFile(configFile)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		fmt.Println("ERROR: opening file:", err)
 		return
 	}
 
 	// Unmarshall the JSON data into a struct
 	var config Config
 	if err := json.Unmarshal(data, &config); err != nil {
-		fmt.Println("Cannot serialize data(unmarshal)")
+		fmt.Println("ERROR: Cannot serialize data(unmarshal)")
 		return
 	}
 
@@ -72,7 +70,7 @@ func main() {
 	}
 
 	if vlessInboundIndex == -1 {
-		fmt.Println("Vless inbound configuration not found")
+		fmt.Println("ERROR: Vless inbound configuration not found")
 		return
 	}
 
@@ -80,7 +78,7 @@ func main() {
 	vlessSettings := vlessInbound["settings"].(map[string]interface{})
 	clientList, ok := vlessSettings["clients"].([]interface{})
 	if !ok {
-		fmt.Println("Error retrieving client list")
+		fmt.Println("ERROR: retrieving client list")
 		return
 	}
 
@@ -109,17 +107,17 @@ func main() {
 	// Marshal the updated config back to JSON
 	newData, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
-		fmt.Println("Error marshalling JSON:", err)
+		fmt.Println("ERROR: marshalling JSON:", err)
 		return
 	}
 
 	// Write the updated config to the file
 	err = os.WriteFile(configFile, newData, 0644)
 	if err != nil {
-		fmt.Println("Error writing config file:", err)
+		fmt.Println("ERROR: writing config file:", err)
 		return
 	}
-	fmt.Printf("New client added successfully! \n uuid = %s \n ShortIds = bba4b98aea9b4c44 \n PublickKey = B6EDlqDc8frz7_LofqbgOse0_ryxT8lwW2P84-3CEU8 ", string(output))
+	fmt.Printf(" New client added successfully! \n uuid = %s ShortIds = bba4b98aea9b4c44 \n PublickKey = B6EDlqDc8frz7_LofqbgOse0_ryxT8lwW2P84-3CEU8 ", string(output))
 	restartXray := exec.Command("systemctl", "restart", "xray")
 	res, err := restartXray.CombinedOutput()
 	if err != nil {

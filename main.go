@@ -115,5 +115,6 @@ func main() {
 		return
 	}
 
-	fmt.Println("New client added successfully!")
+	fmt.Println("New client added successfully! ")
+	fmt.Printf("New client added successfully! \n uuid = %s \n ShortIds = bba4b98aea9b4c44 \n  ", string(output))
 }
